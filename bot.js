@@ -1,25 +1,22 @@
-import { WechatyBuilder } from 'wechaty';
+import { WechatyBuilder } from 'wechaty'
 
 const bot = WechatyBuilder.build({
-  name: 'wechat-demo',
-  puppet: process.env.WECHATY_PUPPET,
-});
+  name: 'wecom-bot',
+  puppet: process.env.WECHATY_PUPPET, // 从变量中读取
+})
 
-bot.on('scan', (qrcode, status) => {
-  const qrcodeTerminal = require('qrcode-terminal');
-  qrcodeTerminal.generate(qrcode, { small: true });
-  console.log(`Scan QR Code to login (${status})`);
-});
-
-bot.on('login', (user) => {
-  console.log(`${user.name()} logged in`);
-});
-
-bot.on('message', async (message) => {
-  console.log(`Message received: ${message}`);
-});
+bot
+  .on('scan', (qrcode, status) => {
+    console.log(`扫码登录状态：${status}\n请使用微信扫描下方二维码登录：`)
+    require('qrcode-terminal').generate(qrcode, { small: true })
+  })
+  .on('login', user => {
+    console.log(`🤖 登录成功：${user}`)
+  })
+  .on('message', message => {
+    console.log(`📨 收到消息：${message}`)
+  })
 
 bot.start()
-  .then(() => console.log('🤖 WeChat bot started.'))
-  .catch((e) => console.error(e));
+  .catch(e => console.error('❌ 启动失败：', e))
 
